@@ -1,3 +1,5 @@
+
+const oracledb = require('oracledb');
 module.exports = {
     database: {
         user: "sys",

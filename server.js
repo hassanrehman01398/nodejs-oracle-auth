@@ -1,9 +1,14 @@
 var express = require('express');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
+var auth = require(__dirname + '/routes/auth.js');
+var publicThings = require(__dirname + '/routes/publicThings.js');
+var protectedThings = require(__dirname + '/routes/protectedThings.js');
+var users = require(__dirname + '/routes/users.js');
+var logins = require(__dirname + '/routes/login.js');
 var app;
 var router;
-var port = 3000;
+var port = 5000;
 
 app = express();
 

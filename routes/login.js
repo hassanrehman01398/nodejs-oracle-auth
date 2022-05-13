@@ -10,6 +10,12 @@ function post(req, res, next) {
             if (err) {
                 return next(err);
             }
+            if(req.body.email==null){
+                
+                return next("Email not found");
+            } if(req.body.password==null){
+                return next("Password not found");
+            }
 
             connection.execute(
                 'select id as "id", ' +
