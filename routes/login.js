@@ -16,7 +16,7 @@ function post(req, res, next) {
             } if(req.body.password==null){
                 return next("Password not found");
             }
-
+//
             connection.execute(
                 'select id as "id", ' +
                 '   email as "email", ' +
@@ -31,6 +31,7 @@ function post(req, res, next) {
                     outFormat: oracledb.OBJECT
                 },
                 function(err, results){
+                    console.log(req.body.email.toLowerCase());
                     var user;
 
                     if (err) {
@@ -42,8 +43,10 @@ function post(req, res, next) {
 
                         return next(err);
                     }
-
+console.log("results");
+                    console.log(results);
                     user = results.rows[0];
+                   
 
                     bcrypt.compare(req.body.password, user.password, function(err, pwMatch) {
                         var payload;

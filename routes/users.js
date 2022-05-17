@@ -5,7 +5,8 @@ var config = require(__dirname + '../../config.js');
 
 function post(req, res, next) {
     var user = {
-        email: req.body.email
+        email: req.body.email,
+        role:req.body.role
     };
     var unhashedPassword = req.body.password;
 
@@ -20,6 +21,9 @@ function post(req, res, next) {
             }
 
             user.hashedPassword = hash;
+            user.password=hash;
+            // console.log("hash password");
+            // console.log(hash)
 
             insertUser(user, function(err, user) {
                 var payload;
@@ -51,7 +55,8 @@ function insertUser(user, cb) {
             if (err) {
                 return cb(err);
             }
-
+console.log("user");
+console.log(user);
             connection.execute(
                 'insert into jsao_users ( ' +
                 '   email, ' +
