@@ -10,7 +10,8 @@ function get(req, res, next) {
             }
 
             connection.execute(
-                'SELECT * FROM CHAT (WHERE SENDER_USER_ID= :userId OR SENDER_USER_ID= :userId)',
+                
+                'SELECT * FROM CHAT WHERE (REPLYER_USER_ID =:userId OR SENDER_USER_ID =:userId)',
                 {
                     userId:req.param('userId')
 

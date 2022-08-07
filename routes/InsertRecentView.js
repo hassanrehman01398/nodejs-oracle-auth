@@ -1,43 +1,36 @@
 var oracledb = require('oracledb');
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
 var config = require(__dirname + '../../config.js');
-var moment = require('moment');
-function put(req, res, next) {
+function post(req, res, next) {
  
     oracledb.autoCommit = true;
     oracledb.getConnection(
         config.database,
-         function(err, connection){
+        async function(err, connection){
             //console.log(req.body)
             if (err) {
                 return next(err);
             }
-            if(req.body.duedate==null){
-                
-                return next("Current Due Date not found");
-            }
-            if(req.body.indexno==null){
+            if(req.body.userid==null){
                 
                 return next("User Id not found");
             }
-            if(req.body.acceno==null){
+            if(req.body.bookid==null){
                 
                 return next("Book Id not found");
             }
             
-            var new_startDate= new Date(req.body.duedate);
-            var update_date= moment(new_startDate).add(14, 'd').format('DD-MMM-YY');
+            // '13-AUG-22'
             connection.execute(
-                "update issue_return SET upd_dt ='"+update_date+"' WHERE INDEX_NO = :indexno and ACCENO = :acceno",
+                "insert into recentviews(user_id,book_id) values(:indexno,:acceno)",
                 {
-                   indexno: req.body.indexno,
-                   acceno:req.body.acceno
+                   indexno: req.body.userid,
+                   acceno:req.body.bookid
                 },
                 {
+                    
+                   autoCommit: true,
                     outFormat: oracledb.OBJECT,
 
-                    autoCommit: true,
 
                 },
                 function(err, results){
@@ -54,7 +47,7 @@ function put(req, res, next) {
                     }
                 
                     
-                    console.log("renewal request submitted");
+                    console.log("inserted view submitted");
          
                     res.status(200).json(results.rows);
 
@@ -68,4 +61,4 @@ function put(req, res, next) {
     );
 }
 
-module.exports.put = put;
+module.exports.post = post;

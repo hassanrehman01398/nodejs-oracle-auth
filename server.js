@@ -3,17 +3,23 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var auth = require(__dirname + '/routes/auth.js');
 //var publicThings = require(__dirname + '/routes/publicThings.js');
-//var protectedThings = require(__dirname + '/routes/protectedThings.js');
+var renewalRequest = require(__dirname + '/routes/RenewalRequest.js');
+var insertViewRequest = require(__dirname + '/routes/InsertRecentView.js');
 var getProfile = require(__dirname + '/routes/GetProfile');
 var insertProfile = require(__dirname + '/routes/InsertProfile');
 var getBooks = require(__dirname + '/routes/GetAllBooks');
+var getBookDetails = require(__dirname + '/routes/GetBookDetail');
 var getChat = require(__dirname + '/routes/GetMyChat');
-var getMyBooks = require(__dirname + '/routes/GetMyBooks');
+var getMyBooks = require(__dirname + '/routes/GetMyActivesBooks');
+var getRecentView = require(__dirname + '/routes/GetRecentView');
 var users = require(__dirname + '/routes/users.js');
 var logins = require(__dirname + '/routes/login.js');
+
+var sendMessage = require(__dirname + '/routes/SendMessage.js');
 var app;
 var router;
 var port = 3001;
+const cors = require('cors')
 
 app = express();
 
@@ -30,14 +36,21 @@ router = express.Router();
 router.get('/getprofile', auth(), getProfile.get);
 
 router.get('/getallbooks', auth(), getBooks.get);
+router.get('/getrecentview', auth(), getRecentView.get);
 
 router.get('/getmybooks', auth(), getMyBooks.get);
+router.get('/getBookDetails', auth(), getBookDetails.get);
 
 router.get('/getChat', auth(), getChat.get);
+router.post('/sendMessage', auth(), sendMessage.post);
+router.put('/renewalrequest', auth(), renewalRequest.put);
+router.post('/insertrecentview',auth() ,insertViewRequest.post);
+
 router.post('/users', users.post);
 router.post('/logins', logins.post);
 router.post('/insertprofile', insertProfile.post);
 
+app.use(cors())
 app.use('/api', router);
 app.listen(port, '0.0.0.0', function() {
     console.log('Listening to port:  ' + port);

@@ -1,48 +1,39 @@
 var oracledb = require('oracledb');
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
 var config = require(__dirname + '../../config.js');
-var moment = require('moment');
-function put(req, res, next) {
- 
-    oracledb.autoCommit = true;
+
+function post(req, res, next) {
     oracledb.getConnection(
         config.database,
-         function(err, connection){
+        function(err, connection){
             //console.log(req.body)
             if (err) {
                 return next(err);
             }
-            if(req.body.duedate==null){
+            if(req.body.message==null){
                 
-                return next("Current Due Date not found");
+                return next("Message not found");
+            } if(req.body.sender_id==null){
+                return next("Sender Id not found");
             }
-            if(req.body.indexno==null){
-                
-                return next("User Id not found");
+            if(req.body.receiver_id==null){
+                return next("Receiver Id not found");
             }
-            if(req.body.acceno==null){
-                
-                return next("Book Id not found");
-            }
-            
-            var new_startDate= new Date(req.body.duedate);
-            var update_date= moment(new_startDate).add(14, 'd').format('DD-MMM-YY');
             connection.execute(
-                "update issue_return SET upd_dt ='"+update_date+"' WHERE INDEX_NO = :indexno and ACCENO = :acceno",
+                'insert into chat(sender_user_id,replyer_user_id,message_content) values(:sender_id,:receiver_id,:message)',
                 {
-                   indexno: req.body.indexno,
-                   acceno:req.body.acceno
+                   sender_id: req.body.sender_id,
+                   receiver_id: req.body.receiver_id,
+                   message:req.body.message
+
                 },
                 {
                     outFormat: oracledb.OBJECT,
-
-                    autoCommit: true,
-
+                    autoCommit: true
                 },
                 function(err, results){
-                    console.log("function return");
-                 
+                    
+                    console.log("results");
+                    console.log(results)
                     if (err) {
                         connection.release(function(err) {
                             if (err) {
@@ -52,9 +43,9 @@ function put(req, res, next) {
 
                         return next(err);
                     }
-                
+
                     
-                    console.log("renewal request submitted");
+                    console.log("chat insert");
          
                     res.status(200).json(results.rows);
 
@@ -68,4 +59,4 @@ function put(req, res, next) {
     );
 }
 
-module.exports.put = put;
+module.exports.post = post;

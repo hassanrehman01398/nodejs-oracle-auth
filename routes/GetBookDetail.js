@@ -10,9 +10,11 @@ function get(req, res, next) {
             }
 
             connection.execute(
-                'select column1 as "column1" ' +
-                'from jsao_protected_things ',
-                {},//no binds
+                'SELECT * FROM AUTHOR a, AUTHOR1 b,SBOOK c, BK_STATUS d,LOC e WHERE a.A_CODE = b.A_COD AND   c.ACCENO = b.ACCENO AND   c.STATUS_CODE = d.STATUS_CODE AND   c.REF=e.LOC_NO and c.ACCENO =: acceno',
+                {
+
+                    acceno:req.param('acceno')
+                },//no binds
                 {
                     outFormat: oracledb.OBJECT
                 },

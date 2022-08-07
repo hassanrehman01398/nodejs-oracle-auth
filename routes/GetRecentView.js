@@ -10,9 +10,11 @@ function get(req, res, next) {
             }
 
             connection.execute(
-                'select column1 as "column1" ' +
-                'from jsao_public_things ',
-                {},//no binds
+                'SELECT * FROM recentviews a,member b,sbook c where a.user_id=b.index_no and a.book_id=c.acceno and a.user_id = :indexno',
+                {
+                    indexno:req.param('indexno')
+
+                },//no binds
                 {
                     outFormat: oracledb.OBJECT
                 },
@@ -34,7 +36,8 @@ function get(req, res, next) {
                             console.error(err.message);
                         }
                     });
-                });
+                }
+            );
         }
     );
 }

@@ -10,11 +10,10 @@ function get(req, res, next) {
             }
 
             connection.execute(
-                'select * from ISSUE_RETURN where INDEX_NO= :indexNo  and ACCENO=:acceNo',
+                'select * from ISSUE_RETURN where INDEX_NO = :indexNo',
                 {
 
-                    indexNo:req.param('indexNo'),
-                    acceNo:req.param('acceNo')
+                    indexNo:req.param('indexNo')
 
                 },//no binds
                 {
