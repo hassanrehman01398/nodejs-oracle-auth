@@ -1,7 +1,10 @@
 var oracledb = require('oracledb');
 var config = require(__dirname + '../../config.js');
+var jwt = require('jsonwebtoken');
+
 
 function get(req, res, next) {
+  
     oracledb.getConnection(
         config.database,
         function(err, connection){
@@ -10,7 +13,7 @@ function get(req, res, next) {
             }
 
             connection.execute(
-                'select * from ISSUE_RETURN where INDEX_NO = :indexNo',
+                'select * from ISSUE_RETURN a,SBOOK b where a.INDEX_NO = :indexNo and a.ACCENO=b.ACCENO',
                 {
 
                     indexNo:req.param('indexNo')
