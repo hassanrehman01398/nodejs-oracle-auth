@@ -7,6 +7,22 @@ const oracledb = require('oracledb');
 
 var config = require(__dirname + '../../config.js');
 var moment = require('moment');
+sendnotification = (title,body,pushtoken) => {
+fetch("https://exp.host/--/api/v2/push/send/", {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Accept-Encoding": "gzip, deflate",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    to: pushToken,
+    data: { extraData: "Some data in the push notification" },
+    title: "This is the title, sent via the app",
+    body: "This push notification was sent via the app!",
+  }),
+});
+}
 async function main() {
   console.log(workerData.description);
   let transporter = nodeMailer.createTransport({
@@ -26,7 +42,7 @@ async function main() {
 
   try {
     var connection = await oracledb.getConnection(config.database);
-    let query = 'SELECT * FROM Books a, Recipients b, category c where a.issued_to=b.rid and b.category=c.category_id';
+    let query = 'select * from issue_return i, member m ,sbook s where i.index_no=m.index_no and i.acceno=s.acceno';
 
     result = await connection.execute(query, [], // no binds
       {
@@ -41,7 +57,7 @@ async function main() {
         //after 1 day -> remainder
         //after 7 days -> notice
         var current = moment();
-        var returndate = new Date(result.RETURN_DATE);
+        var returndate = new Date(result.DUE_DATE);
         returndate = moment(returndate);
         
        
@@ -49,14 +65,15 @@ async function main() {
         if (current.diff(returndate, 'days') == +7) {
           console.log(result.BOOK_TITLE);
           console.log(returndate);
+          sendnotification("NOTICE!! ","Book's Name: " + result.TITLE , result.TOKEN);
 
-          console.log(current);
-          await transporter.sendMail({
-            from: process.env.EMAIL, //SENDER
-            to: result.EMAIL, //MULTIPLE RECEIVERS
-            subject: "NOTICE!! ", //EMAIL SUBJECT
-            html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
-          })
+          // console.log(current);
+          // await transporter.sendMail({
+          //   from: process.env.EMAIL, //SENDER
+          //   to: result.EMAIL, //MULTIPLE RECEIVERS
+          //   subject: "NOTICE!! ", //EMAIL SUBJECT
+          //   html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
+          // })
         }
         //change this code for others (this is the code for alert (before 3 days))
         else if (current.diff(returndate, 'days') == -2) {
@@ -64,12 +81,14 @@ async function main() {
           console.log(returndate);
 
           console.log(current);
-          await transporter.sendMail({
-            from: process.env.EMAIL, //SENDER
-            to: result.EMAIL, //MULTIPLE RECEIVERS
-            subject: "ALERT!! ", //EMAIL SUBJECT
-            html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
-          })
+          
+          sendnotification("ALERT!! ","Book's Name: " + result.TITLE , result.TOKEN);
+          // await transporter.sendMail({
+          //   from: process.env.EMAIL, //SENDER
+          //   to: result.EMAIL, //MULTIPLE RECEIVERS
+          //   subject: "ALERT!! ", //EMAIL SUBJECT
+          //   html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
+          // })
         }
          //change this code for others (this is the code for reminder (after 1 day))
          else if (current.diff(returndate, 'days') == +1) {
@@ -77,12 +96,14 @@ async function main() {
           console.log(returndate);
 
           console.log(current);
-          await transporter.sendMail({
-            from: process.env.EMAIL, //SENDER
-            to: result.EMAIL, //MULTIPLE RECEIVERS
-            subject: "REMINDER!! ", //EMAIL SUBJECT
-            html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
-          })
+      
+          sendnotification("REMINDER!! ","Book's Name: " + result.TITLE , result.TOKEN);
+          // await transporter.sendMail({
+          //   from: process.env.EMAIL, //SENDER
+          //   to: result.EMAIL, //MULTIPLE RECEIVERS
+          //   subject: "REMINDER!! ", //EMAIL SUBJECT
+          //   html: "Book's Name: " + result.BOOK_TITLE + "<br> Book's Author: " + result.AUTHOR, //EMAIL BODY IN HTML FORMAT
+          // })
         }
 
       });
