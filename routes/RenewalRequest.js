@@ -29,7 +29,7 @@ function put(req, res, next) {
             var new_startDate= new Date(req.body.duedate);
             var update_date= moment(new_startDate).add(14, 'd').format('DD-MMM-YY');
             connection.execute(
-                "update issue_return SET upd_dt ='"+update_date+"' WHERE INDEX_NO = :indexno and ACCENO = :acceno",
+                "update issue_return SET DUE_DATE ='"+update_date+"' WHERE INDEX_NO = :indexno and ACCENO = :acceno",
                 {
                    indexno: req.body.indexno,
                    acceno:req.body.acceno

@@ -13,6 +13,7 @@ function get(req, res, next) {
             }
 
             connection.execute(
+                //"SELECT * FROM AUTHOR a, AUTHOR1 b,SBOOK c, BK_STATUS d,LOC e,ISSUE_RETURN f WHERE a.A_CODE = b.A_COD AND   c.ACCENO = b.ACCENO AND   c.STATUS_CODE = d.STATUS_CODE AND   c.REF=e.LOC_NO and c.ACCENO =: acceno"
                 'select * from ISSUE_RETURN a,SBOOK b where a.INDEX_NO = :indexNo and a.ACCENO=b.ACCENO',
                 {
 
@@ -32,7 +33,7 @@ function get(req, res, next) {
 
                         return next(err);
                     }
-
+                    
                     res.status(200).json(results.rows);
 
                     connection.release(function(err) {

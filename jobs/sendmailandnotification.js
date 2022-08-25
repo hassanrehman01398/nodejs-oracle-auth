@@ -2,13 +2,13 @@ require("dotenv").config()
 const { workerData } = require("worker_threads");
 const nodeMailer = require("nodemailer");
 const { Console } = require("console");
-
+const fetch = require("node-fetch");
 const oracledb = require('oracledb');
 
 var config = require(__dirname + '../../config.js');
 var moment = require('moment');
-sendnotification = (title,body,pushtoken) => {
-fetch("https://exp.host/--/api/v2/push/send/", {
+const sendnotification = (notititle,notibody,pushtoken) => {
+  fetch("https://exp.host/--/api/v2/push/send/", {
   method: "POST",
   headers: {
     Accept: "application/json",
@@ -16,10 +16,10 @@ fetch("https://exp.host/--/api/v2/push/send/", {
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    to: pushToken,
+    to: pushtoken,
     data: { extraData: "Some data in the push notification" },
-    title: "This is the title, sent via the app",
-    body: "This push notification was sent via the app!",
+    title: notititle,
+    body: notibody,
   }),
 });
 }
@@ -60,11 +60,13 @@ async function main() {
         var returndate = new Date(result.DUE_DATE);
         returndate = moment(returndate);
         
-       
+       console.log(current.diff(returndate, 'days'));
         //change this code for others (this is the code for reminder (after 7 days))
+     
         if (current.diff(returndate, 'days') == +7) {
           console.log(result.BOOK_TITLE);
           console.log(returndate);
+          
           sendnotification("NOTICE!! ","Book's Name: " + result.TITLE , result.TOKEN);
 
           // console.log(current);
