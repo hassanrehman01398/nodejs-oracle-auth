@@ -29,7 +29,7 @@ const Bree = require('bree')
 const bree = new Bree({
   jobs : [{
     name : 'sendmailandnotification',
-    cron : '1 12 * * *',
+    cron : '5 * * * *',
     worker : {
       workerData : {
         description : "This job will send email and notifications."

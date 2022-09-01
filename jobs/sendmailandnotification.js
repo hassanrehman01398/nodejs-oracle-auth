@@ -62,7 +62,8 @@ async function main() {
         
        console.log(current.diff(returndate, 'days'));
         //change this code for others (this is the code for reminder (after 7 days))
-     
+        sendnotification("NOTICE!! ","Book's Name: " + result.TITLE , result.TOKEN);
+
         if (current.diff(returndate, 'days') == +7) {
           console.log(result.BOOK_TITLE);
           console.log(returndate);
